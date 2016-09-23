@@ -50,8 +50,10 @@ defmodule Battlenet.Character do
 	end
 
 	def handle_call( { :get, realm, character_name, fields }, _from, _state) do
-		generate_url(realm, character_name, fields)
+		response = generate_url(realm, character_name, fields)
 		|> Battlenet.API.get!
+
+		{ :reply, response, nil }
 	end
 
 	###############
