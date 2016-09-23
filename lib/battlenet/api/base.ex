@@ -11,7 +11,7 @@ defmodule Battlenet.API.Base do
 	def process_response_body(body) do
 		body
 		|> Poison.decode!
-		|> Enum.map(&to_atom_key_value/1)
+		# |> Enum.map(&to_atom_key_value/1)
 	end
 
 	defp to_atom_key_value({ key, value }) do

@@ -1,22 +1,51 @@
 defmodule Battlenet.Guild do
-	defstruct [ :realm, :name ]
+	use GenServer
 
-	# def storage(%Battlenet.Cache{} = cache), do: "#{cache.region}/guilds/#{cache.realm}/#{cache.name}"
+	def start do
+		GenServer.start(__MODULE__, nil, name: __MODULE__)
+	end
 
-	def members(realm, guild_name), do: get(realm, guild_name, "members")
-	def profile(realm, guild_name),  do: get(realm, guild_name, "challenge")
-	def achievements(realm, guild_name), do: get(realm, guild_name, "achievements")
-	def news(realm, guild_name), do: get(realm, guild_name, "news")
-	def challenge(realm, guild_name), do: get(realm, guild_name, "challenge")
+	def stop do
+		GenServer.stop(__MODULE__)
+	end
 
-	def get!(url), do: Battlenet.API.get!(url)
+	###############
+	# interfaces
+	###############
+	def members(realm, guild_name), do: GenServer.call(__MODULE__, { :get, realm, guild_name, "members" }) #get(realm, guild_name, "members")
+	def profile(realm, guild_name),  do: GenServer.call(__MODULE__, { :get, realm, guild_name, "profile" }) #get(realm, guild_name, "challenge")
+	def achievements(realm, guild_name), do: GenServer.call(__MODULE__, { :get, realm, guild_name, "achievements" }) #get(realm, guild_name, "achievements")
+	def news(realm, guild_name), do: GenServer.call(__MODULE__, { :get, realm, guild_name, "news" }) # get(realm, guild_name, "news")
+	def challenge(realm, guild_name), do: GenServer.call(__MODULE__, { :get, realm, guild_name, "challenge" }) # get(realm, guild_name, "challenge")
+	def get(realm, guild_name, fields) when is_list(fields), do: GenServer.call(__MODULE__, { :get, realm, guild_name, fields })
+	def get(realm, guild_name, field), do: GenServer.call(__MODULE__, { :get, realm, guild_name, [field] })
+	def get(realm, guild_name), do: GenServer.call(__MODULE__, { :get, realm, guild_name, [] })
+	
+	###############
+	# Callbacks
+	###############
+	def init(_args) do
+		{ :ok, nil }	
+	end
 
-	def get(realm, guild_name, fields) when is_list(fields) do
+	def handle_call({ :get, realm, guild, fields }, _from, _state) do
+		response = find(realm, guild, fields)
+		{ :reply, response, nil }
+	end
+
+
+	###############
+	# Private
+	###############
+	defp get!(url), do: Battlenet.API.get!(url)
+
+	defp find(realm, guild_name, fields) when is_list(fields) do
 		generate_url(realm, guild_name, fields)
 		|> get!
 	end
-	def get(realm, guild_name, field), do: get(realm, guild_name, [field])
-	def get(realm, guild_name), do: get(realm, guild_name, [])
+	defp find(realm, guild_name, field), do: find(realm, guild_name, [field])
+	# defp find(realm, guild_name), do: find(realm, guild_name, [])
+
 
 	defp generate_url(realm, guild_name, fields) when is_list(fields) do
 		query_string = Battlenet.URI.query_params(fields)
@@ -25,108 +54,3 @@ defmodule Battlenet.Guild do
 
 	defp generate_url(realm, guild_name, field), do: generate_url(realm, guild_name, [field])
 end
-
-defmodule Battlenet.Guild.Parser do
-	use GenServer
-
-	def start do
-		GenServer.start(__MODULE__, nil)
-	end
-
-	def parse(pid, realm, guild_name, fields \\ ["members"]) do
-		GenServer.cast(pid, { :parse, realm, guild_name, fields })
-	end
-
-	# callbacks
-	def init(_) do
-		{ :ok, nil }
-	end
-
-	def handle_cast({ :parse, realm, guild_name, fields }, _) do
-		guild = Battlenet.Guild.get(realm, guild_name, fields)
-
-    parse_members(guild.members)
-
-		{ :noreply, nil }
-	end
-
-	defp parse_members([ member | members ]) do
-		%{ "character" => %{ "realm" => realm, "name" => name } } = member
-		IO.puts("#{realm}.#{name}")
-	  parse_members(members)
-	end
-
-	defp parse_members([]), do: nil
-end
-
-defmodule Battlenet.Character.Parser do
-	use GenServer
-
-	def start do
-		GenServer.start(__MODULE__, nil)
-	end
-
-	def stop(pid) do
-		GenServer.stop(pid)
-	end
-
-	def parse(pid, realm, character_name, fields) do
-		GenServer.call(pid, { :parse, realm, character_name, fields })
-	end
-
-	# callbacks
-	def init(_) do
-		{ :ok, nil }
-	end
-
-	def handle_call({ :parse, realm, character_name, fields }, _from, _state) do
-		IO.puts("Get character #{realm}.#{character_name}. With: #{inspect(fields)}")
-
-		{ :reply, nil }
-	end
-end
-
-defmodule Battlenet.GuildServer do
-	use GenServer
-
-	#########################
-	#### interface
-	#########################
-	def start do
-		GenServer.start(__MODULE__, nil)
-	end
-
-	def get(server, realm, guild_name, fields) when is_list(fields) do
-		GenServer.call(server, { :get, realm, guild_name, fields })
-	end
-
-	#########################
-	#### handlers
-	#########################	
-	def init(_) do
-		{ :ok, nil }
-	end
-
-	def handle_call({ :get, realm, guild_name, fields }, _, state) do
-		{ 
-			:reply,
-			{ :ok, Battlenet.Guild.get(realm, guild_name, fields) },
-			state
-		}
-	end
-end
-
-defmodule Battlenet.Testing do
-	def test do
-		{ :ok, pid } = Battlenet.Guild.Parser.start
-		Battlenet.Guild.Parser.parse(pid, "Greymane", "Solution")
-
-		# { :ok, server2 } = Battlenet.Guild.Parser.start
-		# Battlenet.Guild.Parser.parse(server2, "Greymane", "Despotism")
-
-		# Battlenet.GuildWorker.get("Greymane", "Solution", [])
-		# Battlenet.GuildWorker.get("Greymane", "Despotism", [])
-	end
-end
-
-# Battlenet.Character.get(Greymane", "Virtualize", [:achievements, :appearance])

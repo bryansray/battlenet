@@ -1,0 +1,19 @@
+{
+  "achievementPoints": 2595,
+  "battlegroup": "Shadowburn",
+  "emblem": {
+    "backgroundColor": "ff003582",
+    "backgroundColorId": 32,
+    "border": 3,
+    "borderColor": "ffffffff",
+    "borderColorId": 14,
+    "icon": 38,
+    "iconColor": "ffb1b8b1",
+    "iconColorId": 14
+  },
+  "lastModified": 1474514067000,
+  "level": 25,
+  "name": "Solution",
+  "realm": "Greymane",
+  "side": 0
+}

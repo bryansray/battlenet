@@ -14,7 +14,7 @@ defmodule Battlenet.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison, :postgrex, :ecto]]
+    [applications: [:logger, :httpoison]]
   end
 
   # Dependencies can be Hex packages:
@@ -29,7 +29,6 @@ defmodule Battlenet.Mixfile do
   defp deps do
     [{:httpoison, "~> 0.9.1"},
      {:poison, "~> 2.2"},
-     {:ecto, "~> 2.1.0-rc.0"},
-     {:postgrex, "~> 0.12.0"}]
+     {:mix_test_watch, "~> 0.2.6", only: :dev}]
   end
 end

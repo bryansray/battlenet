@@ -1,4 +1,3 @@
-
 defmodule Battlenet.API do
 	def get!(url) do
 		Battlenet.Cache.URL.get!(url)
