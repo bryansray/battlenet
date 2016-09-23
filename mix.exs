@@ -5,6 +5,8 @@ defmodule Battlenet.Mixfile do
     [app: :battlenet,
      version: "0.1.0",
      elixir: "~> 1.3",
+     description: description(),
+     package: package(),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps()]
@@ -30,5 +32,18 @@ defmodule Battlenet.Mixfile do
     [{:httpoison, "~> 0.9.1"},
      {:poison, "~> 2.2"},
      {:mix_test_watch, "~> 0.2.6", only: :dev}]
+  end
+
+  defp description do
+    """
+    Battlenet is an Elixir library that exposes Blizzard's Community Platform API.
+    """
+  end
+
+  defp package do
+    [
+      maintainers: ["Bryan Ray <bryan@bryanray.net>"],
+      licenses: ["GPL-3.0"],
+      links: %{ "Github" => "http://github.com/bryansray/battlenet" }]
   end
 end
