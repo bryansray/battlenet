@@ -16,7 +16,8 @@ defmodule Battlenet.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison]]
+    [applications: [:logger, :httpoison],
+     mod: {Battlenet.Application, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -31,6 +32,7 @@ defmodule Battlenet.Mixfile do
   defp deps do
     [{:httpoison, "~> 0.9.1"},
      {:poison, "~> 2.2"},
+     {:ex_doc, ">= 0.0.0", only: :dev},
      {:mix_test_watch, "~> 0.2.6", only: :dev}]
   end
 
@@ -42,6 +44,7 @@ defmodule Battlenet.Mixfile do
 
   defp package do
     [
+      name: :battlenetex,
       maintainers: ["Bryan Ray <bryan@bryanray.net>"],
       licenses: ["GPL-3.0"],
       links: %{ "Github" => "http://github.com/bryansray/battlenet" }]

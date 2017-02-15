@@ -2,11 +2,11 @@ defmodule Battlenet.Character do
 	use GenServer
 
 	def start do
-		GenServer.start(__MODULE__, nil, name: __MODULE__)
+		GenServer.start(__MODULE__, nil)
 	end
 
-	def stop do
-		GenServer.stop(__MODULE__)
+	def stop(pid) do
+		GenServer.stop(pid)
 	end
 
 	###############

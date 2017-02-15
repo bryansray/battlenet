@@ -26,7 +26,7 @@ defmodule Battlenet.Cache.URL do
 
   defp get_cache_file_for_url(url) do
     cache_location = Application.get_env(:battlenet, :cache_path, "./cache")
-    filename = Base.url_encode64(url)
+    filename = "last_call.json" # Base.url_encode64(url)
 
     Path.join(cache_location, filename)
   end
