@@ -4,7 +4,7 @@ defmodule Battlenet.Mixfile do
   def project do
     [app: :battlenet,
      version: "0.1.0",
-     elixir: "~> 1.3",
+     elixir: "~> 1.4",
      description: description(),
      package: package(),
      build_embedded: Mix.env == :prod,
@@ -16,7 +16,7 @@ defmodule Battlenet.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison],
+    [extra_applications: [:logger],
      mod: {Battlenet.Application, []}]
   end
 
@@ -30,10 +30,10 @@ defmodule Battlenet.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:httpoison, "~> 0.9.1"},
-     {:poison, "~> 2.2"},
-     {:ex_doc, ">= 0.0.0", only: :dev},
-     {:mix_test_watch, "~> 0.2.6", only: :dev}]
+    [{:httpoison, "~> 0.11.1"},
+     {:poison, "~> 3.1.0"},
+     {:ex_doc, ">= 0.15.0", only: :dev},
+     {:mix_test_watch, "~> 0.3.3", only: :dev}]
   end
 
   defp description do
