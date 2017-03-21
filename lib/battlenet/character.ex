@@ -1,8 +1,8 @@
 defmodule Battlenet.Character do
 	use GenServer
 
-	def start do
-		GenServer.start(__MODULE__, nil)
+	def start_link do
+		GenServer.start_link(__MODULE__, :ok, [])
 	end
 
 	def stop(pid) do
@@ -12,53 +12,53 @@ defmodule Battlenet.Character do
 	###############
 	# interfaces
 	###############
-	def profile(realm, character_name), do: call(realm, character_name)
-	def achievements(realm, character_name), do: call(realm, character_name, "achievements")
-	def appearance(realm, character_name), do: call(realm, character_name, "appearance")
-	def feed(realm, character_name), do: call(realm, character_name, "feed")
-	def guild(realm, character_name), do: call(realm, character_name, "guild")
-	def items(realm, character_name), do: call(realm, character_name, "items")
-	def mounts(realm, character_name), do: call(realm, character_name, "mounts")
-	def pets(realm, character_name), do: call(realm, character_name, "pets")
-	def pet_slots(realm, character_name), do: call(realm, character_name, "petSlots")
-	def professions(realm, character_name), do: call(realm, character_name, "professions")
-	def progression(realm, character_name), do: call(realm, character_name, "progression")
-	def pvp(realm, character_name), do: call(realm, character_name, "pvp")
-	def quests(realm, character_name), do: call(realm, character_name, "quests")
-	def reputation(realm, character_name), do: call(realm, character_name, "reputation")
-	def statistics(realm, character_name), do: call(realm, character_name, "statistics")
-	def stats(realm, character_name), do: call(realm, character_name, "stats")
-	def talents(realm, character_name), do: call(realm, character_name, "talents")
-	def titles(realm, character_name), do: call(realm, character_name, "titles")
-	def audit(realm, character_name), do: call(realm, character_name, "audit")
+	def profile(pid, realm, character_name), 			do: call(pid, realm, character_name)
+	def achievements(pid, realm, character_name), do: call(pid, realm, character_name, "achievements")
+	def appearance(pid, realm, character_name), 	do: call(pid, realm, character_name, "appearance")
+	def feed(pid, realm, character_name), 				do: call(pid, realm, character_name, "feed")
+	def guild(pid, realm, character_name), 				do: call(pid, realm, character_name, "guild")
+	def items(pid, realm, character_name), 				do: call(pid, realm, character_name, "items")
+	def mounts(pid, realm, character_name), 			do: call(pid, realm, character_name, "mounts")
+	def pets(pid, realm, character_name), 				do: call(pid, realm, character_name, "pets")
+	def pet_slots(pid, realm, character_name), 		do: call(pid, realm, character_name, "petSlots")
+	def professions(pid, realm, character_name), 	do: call(pid, realm, character_name, "professions")
+	def progression(pid, realm, character_name), 	do: call(pid, realm, character_name, "progression")
+	def pvp(pid, realm, character_name), 					do: call(pid, realm, character_name, "pvp")
+	def quests(pid, realm, character_name), 			do: call(pid, realm, character_name, "quests")
+	def reputation(pid, realm, character_name), 	do: call(pid, realm, character_name, "reputation")
+	def statistics(pid, realm, character_name), 	do: call(pid, realm, character_name, "statistics")
+	def stats(pid, realm, character_name), 				do: call(pid, realm, character_name, "stats")
+	def talents(pid, realm, character_name), 			do: call(pid, realm, character_name, "talents")
+	def titles(pid, realm, character_name), 			do: call(pid, realm, character_name, "titles")
+	def audit(pid, realm, character_name), 				do: call(pid, realm, character_name, "audit")
 
-	def get(realm, character_name, fields) when is_list(fields) do
-		call(realm, character_name, fields)
+	def get(pid, realm, character_name, fields) when is_list(fields) do
+		call(pid, realm, character_name, fields)
 	end
-	def get(realm, character_name, field), do: call(realm, character_name, [field])
-	def get(realm, character_name), do: call(realm, character_name, [])
-
-	defp call(realm, character_name, fields) when is_list(fields), do: GenServer.call(__MODULE__, { :get, realm, character_name, fields })
-	defp call(realm, character_name, field), do: call(realm, character_name, [field]) # GenServer.call(__MODULE__, { :get, realm, character_name, [field] })
-	defp call(realm, character_name), do: call(realm, character_name, []) # GenServer.call(__MODULE__, { :get, realm, character_name, [] })
+	def get(pid, realm, character_name, field), do: call(pid, realm, character_name, [field])
+	def get(pid, realm, character_name), 				do: call(pid, realm, character_name, [])
 
 	###############
-	# interfaces
+	# callbacks
 	###############
 	def init(_args) do
-		{ :ok, nil }
+		{ :ok, [] }
 	end
 
 	def handle_call( { :get, realm, character_name, fields }, _from, _state) do
 		response = generate_url(realm, character_name, fields)
 		|> Battlenet.API.get!
 
-		{ :reply, response, nil }
+		{ :reply, response, [] }
 	end
 
 	###############
 	# Private
 	###############
+	defp call(pid, realm, character_name, fields) when is_list(fields), do: GenServer.call(pid, { :get, realm, character_name, fields })
+	defp call(pid, realm, character_name, field), do: call(pid, realm, character_name, [field])
+	defp call(pid, realm, character_name), do: call(pid, realm, character_name, [])
+
 	defp generate_url(realm, character_name, fields) when is_list(fields) do
 		query_params = Battlenet.URI.query_params(fields)
 		"/wow/character/#{realm}/#{character_name}?" <> query_params

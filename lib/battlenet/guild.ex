@@ -33,7 +33,6 @@ defmodule Battlenet.Guild do
 		{ :reply, response, nil }
 	end
 
-
 	###############
 	# Private
 	###############

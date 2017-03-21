@@ -14,7 +14,7 @@ defmodule Battlenet.API.Base do
 		# |> Enum.map(&to_atom_key_value/1)
 	end
 
-	defp to_atom_key_value({ key, value }) do
-		{ String.to_atom(key), value }
-	end
+	# defp to_atom_key_value({ key, value }) do
+	# 	{ String.to_atom(key), value }
+	# end
 end
