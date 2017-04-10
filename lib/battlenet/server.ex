@@ -6,7 +6,6 @@ defmodule Battlenet.Server do
 	end
 
 	def init(_) do
-		IO.puts("Starting Battlenet.Server ...")
 		{ :ok, nil }
 	end
 end

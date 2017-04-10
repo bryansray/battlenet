@@ -31,7 +31,7 @@ defmodule Battlenet.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [{:httpoison, "~> 0.11.1"},
-     {:poison, "~> 3.1.0"},
+     {:poison, "~> 2.0"},
      {:ex_doc, ">= 0.15.0", only: :dev},
      {:mix_test_watch, "~> 0.3.3", only: :dev}]
   end

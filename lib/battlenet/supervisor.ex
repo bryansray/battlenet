@@ -6,10 +6,15 @@ defmodule Battlenet.Supervisor do
 	end
 
 	def init([]) do
-		IO.puts("Starting Battlenet.Supervisor ...")
 		children = [
-			worker(Battlenet.Cache, []),
-			worker(Battlenet.Server, [])
+			worker(Battlenet.Character, []),
+			worker(Battlenet.CharacterClasses, []),
+			worker(Battlenet.Guild, []),
+			worker(Battlenet.Races, []),
+			worker(Battlenet.Quest, []),
+			worker(Battlenet.RealmStatus, [])
+			# worker(Battlenet.Cache, []),
+			# worker(Battlenet.Server, [])
 		]
 
 		supervise(children, strategy: :one_for_one)

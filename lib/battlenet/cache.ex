@@ -9,7 +9,6 @@ defmodule Battlenet.Cache do
 
   # Callbacks
   def init(_) do
-    IO.puts("Initializing Battlenet.Cache ...")
     { :ok, nil }
   end
 
